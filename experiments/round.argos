@@ -1,0 +1,115 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="12000" ticks_per_second="10" random_seed="0" />
+  </framework>
+  
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+  
+    <controller1 library="build/lib/libforaging_controllers" id="controller1">
+      <actuators>
+        <pipuck_differential_drive implementation="default" />
+        <pipuck_leds implementation="color" medium="leds" />
+      </actuators>
+      <sensors>
+        <colored_blob_omnidirectional_camera implementation="rot_z_only" medium="leds" show_rays="true" />
+        <pipuck_rangefinders implementation="default" />
+        <pipuck_system implementation="default" />
+      </sensors>
+      <params />
+    </controller1>
+    <controller2 library="build/lib/libforaging_controllers" id="controller2">
+      <actuators>
+        <pipuck_differential_drive implementation="default" />
+        <pipuck_leds implementation="color" medium="leds" />
+      </actuators>
+      <sensors>
+        <colored_blob_omnidirectional_camera implementation="rot_z_only" medium="leds" show_rays="true" />
+        <pipuck_rangefinders implementation="default" />
+        <pipuck_system implementation="default" />
+      </sensors>
+      <params />
+    </controller2>
+  </controllers>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions library="build/lib/libforaging_loop_functions"
+                  label="foraging_loop_functions">
+    <params
+      num_food_items="1"
+      arena_size="4,4"
+    />
+  </loop_functions>
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="4, 4, 1" positional_index="grid">
+    <!-- walls -->
+    <box id="wall_north" size="4,0.1,0.5" movable="false"><body position="0,2,0" orientation="0,0,0"/></box>
+    <box id="wall_south" size="4,0.1,0.5" movable="false"><body position="0,-2,0" orientation="0,0,0"/></box>
+    <box id="wall_east" size="0.1,4,0.5" movable="false"><body position="2,0,0" orientation="0,0,0"/></box>
+    <box id="wall_west" size="0.1,4,0.5" movable="false"><body position="-2,0,0" orientation="0,0,0"/></box>
+    <!-- robots -->
+		<!-- team1 -->
+		<distribute>
+		<position method="uniform" min="-1.9,-1.9,0" max="1.9,1.9,0"/>
+		<orientation method="uniform" min="0,0,0" max="360,0,0"/>
+		<entity quantity="4" max_trials="100">
+			<pipuck id="puck1-" led_medium="leds" camera_aperture="70">
+			<controller config="controller1"/>
+			</pipuck>
+		</entity>
+		</distribute>
+		<!-- team2 -->
+		<distribute>
+		<position method="uniform" min="-1.5,-1.5,0" max="1.5,1.5,0"/>
+		<orientation method="uniform" min="0,0,0" max="360,0,0"/>
+		<entity quantity="4" max_trials="100">
+			<pipuck id="puck2-" led_medium="leds" camera_aperture="80">
+			<controller config="controller2"/>
+			</pipuck>
+		</entity>
+		</distribute>
+
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics2d id="dyn2d" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <led id="leds"/>
+  </media>
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <visualization>
+    <qt-opengl show_boundary="false">
+      <user_functions library="build/lib/libforaging_loop_functions" label="qt_functions"/>
+      <camera>
+        <placements>  
+          <placement index="0" position="0,0,3" look_at="0,0,0" up="0,1,0"/>
+        </placements>
+      </camera>
+    </qt-opengl>
+  </visualization>
+
+</argos-configuration>
