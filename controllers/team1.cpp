@@ -7,7 +7,6 @@ namespace argos {
 
 	void Controller1::Init(TConfigurationNode& t_tree) {
 		ForagingController::Init(t_tree);
-		m_pcColoredLEDs->SetRingLEDs(CColor::BLUE);
 
 		/* Your Init code goes here */
 	}

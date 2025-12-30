@@ -16,4 +16,8 @@ namespace argos {
         m_rng = CRandom::CreateRNG("argos");
     }
     
+    void ForagingController::SetTeamColor(const CColor& color) {
+        m_teamColor = color;
+        m_pcColoredLEDs->SetRingLEDs(m_teamColor);
+    }
 }

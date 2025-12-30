@@ -21,6 +21,8 @@ public:
     virtual ~ForagingController() {}
 
     void Init(TConfigurationNode& t_tree) override;
+    void SetTeamColor(const CColor& color); // for use by loop function
+    CColor m_teamColor;
 
     bool hasFood() { return m_carriedFoodId.has_value(); }
     uint32_t getCarriedFoodId() { return m_carriedFoodId.value(); }
@@ -32,7 +34,6 @@ public:
 protected:
     // Actuators and sensors
     CCI_PiPuckDifferentialDriveActuator* m_pcWheels = nullptr;
-    CCI_PiPuckColorLEDsActuator* m_pcColoredLEDs = nullptr;
     CCI_ColoredBlobOmnidirectionalCameraSensor* m_pcCamera = nullptr;
     CCI_PiPuckRangefindersSensor* m_pcRangefinders = nullptr;
     CCI_PiPuckSystemSensor* m_pcSystem = nullptr;
@@ -43,6 +44,11 @@ protected:
     // Foraging variables
     std::optional<uint32_t> m_carriedFoodId = std::nullopt;
     std::vector<CVector3> m_basePositions;
+
+private:
+    // LED actuator (private so team controllers can't access it directly)
+    CCI_PiPuckColorLEDsActuator* m_pcColoredLEDs = nullptr;
+
 };
 
 } // namespace argos

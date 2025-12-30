@@ -24,7 +24,6 @@ namespace argos {
    };
 
    class CForagingLoopFunctions : public CLoopFunctions {
-
    public:
 
       CForagingLoopFunctions() {}
@@ -33,9 +32,11 @@ namespace argos {
       FoodItem& getFoodItem(uint32_t id);
       const std::vector<CVector3>& getBases1() const { return m_Bases1; }
       const std::vector<CVector3>& getBases2() const { return m_Bases2; }
+      const CColor& GetTeamColor(uint8_t team) const { return (team == 1) ? m_Team1Color : m_Team2Color; }
 
       void Init(TConfigurationNode& t_tree) override;
       void PreStep() override;
+      void PostExperiment() override;
 
       static constexpr Real PICKUP_RADIUS_SQRD = 0.05 * 0.05; // radius within which a pipuck can pick up food
       static constexpr Real BASE_RADIUS = 0.1; // radius of base area
@@ -46,8 +47,15 @@ namespace argos {
       uint32_t m_uNumFoodItems;
 
       std::map<int, FoodItem> m_FoodItems; // map: CLEDEntity ID -> FoodItem
+      // Base positions
       std::vector<CVector3> m_Bases1; // team1 base positions
       std::vector<CVector3> m_Bases2; // team2 base positions
+      // Team colors
+      CColor m_Team1Color; // team1 color
+      CColor m_Team2Color; // team2 color
+      // Team Scores
+      uint32_t m_Team1Score = 0;
+      uint32_t m_Team2Score = 0;
 
       bool m_bLazyInitialized = false;
    };

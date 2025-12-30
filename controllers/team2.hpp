@@ -15,4 +15,4 @@ namespace argos {
 
       uint8_t getTeamId() const override { return 2; }
    };
-}
+} // namespace argos

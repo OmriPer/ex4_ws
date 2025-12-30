@@ -11,6 +11,8 @@
 namespace argos {
 
 class CQTFunctions : public CQTOpenGLUserFunctions {
+    CColor m_Team1Color;
+    CColor m_Team2Color;
 
 public:
 

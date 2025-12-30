@@ -7,6 +7,8 @@ namespace argos {
 
 CQTFunctions::CQTFunctions() :
     m_cForagingLF(dynamic_cast<CForagingLoopFunctions&>(CSimulator::GetInstance().GetLoopFunctions())) {
+        m_Team1Color = m_cForagingLF.GetTeamColor(1);
+        m_Team2Color = m_cForagingLF.GetTeamColor(2);
         RegisterUserFunction<CQTFunctions,CPiPuckEntity>(&CQTFunctions::Draw);
         RegisterUserFunction<CQTFunctions,CLEDEntity>(&CQTFunctions::Draw);
 }
@@ -62,12 +64,12 @@ void CQTFunctions::DrawInWorld() {
             CVector3(basePos.GetX(), basePos.GetY(), 0.001f), // slightly above ground
             CQuaternion(),
             m_cForagingLF.BASE_RADIUS,
-            CColor::BLUE
+            m_cForagingLF.GetTeamColor(1)
         );
         DrawText(
             basePos + CVector3(0.0f, 0.0f, 0.05f), // slightly above base
             "Base",
-            CColor::BLUE
+            m_cForagingLF.GetTeamColor(1)
         );
     }
     // draw team2 base positions
@@ -76,12 +78,12 @@ void CQTFunctions::DrawInWorld() {
             CVector3(basePos.GetX(), basePos.GetY(), 0.001f), // slightly above ground
             CQuaternion(),
             m_cForagingLF.BASE_RADIUS,
-            CColor::RED
+            m_cForagingLF.GetTeamColor(2)
         );
         DrawText(
             basePos + CVector3(0.0f, 0.0f, 0.05f), // slightly above base
             "Base",
-            CColor::RED
+            m_cForagingLF.GetTeamColor(2)
         );
     }
 }

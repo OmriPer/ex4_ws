@@ -5,6 +5,9 @@ namespace argos {
 	
 	void CForagingLoopFunctions::Init(TConfigurationNode& t_tree) {
 		TConfigurationNode& paramsNode = GetNode(t_tree, "params");
+		GetNodeAttribute(paramsNode, "color1", m_Team1Color);
+		GetNodeAttribute(paramsNode, "color2", m_Team2Color);
+		
 		
 		// initialize random number generator
 		m_pcRNG = CRandom::CreateRNG("argos");
@@ -45,7 +48,7 @@ namespace argos {
 	void CForagingLoopFunctions::PreStep() {
 		CSpace::TMapPerType& pipucks = GetSpace().GetEntitiesByType("pipuck");
 
-		// lazy initialization to add base positions to controllers (so pipuck entities are already created when we do this)
+		// lazy initialization to add base positions & team colors (so pipuck entities are already created when we do this)
 		if (!m_bLazyInitialized) {
 			for (auto& pipuck_pair : pipucks) {
 				// cast the entity to CPiPuckEntity & the controller to ForagingController
@@ -56,6 +59,9 @@ namespace argos {
 				for (const CVector3& basePos : m_Bases) {
 					pipuckController.addBasePosition(basePos);
 				}
+				// set team color
+				const CColor& teamColor = (pipuckController.getTeamId() == 1) ? m_Team1Color : m_Team2Color;
+				pipuckController.SetTeamColor(teamColor);
 			}
 			m_bLazyInitialized = true;
 		}
@@ -95,6 +101,12 @@ namespace argos {
 						foodItem.ledEntity->SetPosition(newPosition);
 						// inform the controller that the food has been dropped
 						pipuckController.ClearCarriedFoodId();
+						// update team score
+						if (pipuckController.getTeamId() == 1) {
+							m_Team1Score++;
+						} else {
+							m_Team2Score++;
+						}
 						break; // exit loop after dropping off
 					}
 				}
@@ -115,6 +127,24 @@ namespace argos {
 					}
 				}
 			}
+		}
+	}
+
+	void CForagingLoopFunctions::PostExperiment() {
+		// Output final scores to the scores csv file
+		std::ofstream scoreFile;
+		scoreFile.open("foraging_scores.csv", std::ios::app);
+		if (scoreFile.is_open()) {
+			if (scoreFile.tellp() == 0) {
+				// file is empty, write header
+				scoreFile << "seed, time, team1, team2" << std::endl;
+			}
+			std::string seed = std::to_string(CSimulator::GetInstance().GetRandomSeed());
+			std::string time = ToString(GetSpace().GetSimulationClock());
+			scoreFile << seed << ", " << time << ", " << m_Team1Score << ", " << m_Team2Score << std::endl;
+			scoreFile.close();
+		} else {
+			LOGERR << "Could not open foraging_scores.csv to write scores!" << std::endl;
 		}
 	}
 	
